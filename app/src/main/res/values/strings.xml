@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Falih Mandiri Test App</string>
+    <string name="news_api_base_url">https://newsapi.org</string>
+    <string name="news_api_key">56abd84b04d0452895b82a6d0034e02b</string>
+</resources>

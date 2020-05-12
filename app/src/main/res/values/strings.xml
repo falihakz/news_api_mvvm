@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Falih Mandiri Test App</string>
+    <string name="hint_search_news">search news</string>
+    <string name="no_article_found">No Article Found</string>
+    <string name="loading_data">Loading Data</string>
+    <string name="loading_more_data">Loading more article</string>
+    <string name="failed_to_load_data">Failed to load the latest article</string>
 </resources>

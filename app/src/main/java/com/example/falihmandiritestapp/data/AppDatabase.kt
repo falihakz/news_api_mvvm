@@ -1,12 +1,12 @@
-package com.example.cermatitestapp.database
+package com.example.falihmandiritestapp.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.falihmandiritestapp.BuildConfig
-import com.example.falihmandiritestapp.database.dao.ArticleDao
-import com.example.falihmandiritestapp.database.entity.Article
+import com.example.falihmandiritestapp.data.dao.ArticleDao
+import com.example.falihmandiritestapp.data.entity.Article
 import java.io.File
 
 @Database(entities = [Article::class], version = 1)

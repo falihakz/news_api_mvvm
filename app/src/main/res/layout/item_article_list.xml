@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:elevation="1dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/article_thumbnail"
+                android:layout_width="50dp"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/ic_close_grey_24dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/article_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:padding="10dp"
+                android:layout_gravity="center_vertical"
+                tools:text="Trump wants California to let automaker Tesla reopen assembly plant" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                tools:text="4m ago" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                android:text=" - "
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/source"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                tools:text="Reuters.com"/>
+
+        </LinearLayout>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:id="@+id/article_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="U.S. president Donald Trump on Tuesday urged California to allow Tesla inc to reopen its electric vehicle"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

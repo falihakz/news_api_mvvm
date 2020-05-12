@@ -1,8 +1,8 @@
-package com.example.falihmandiritestapp.database.dao
+package com.example.falihmandiritestapp.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.falihmandiritestapp.database.entity.Article
+import com.example.falihmandiritestapp.data.entity.Article
 
 @Dao
 interface ArticleDao {

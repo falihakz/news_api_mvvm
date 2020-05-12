@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="com.example.falihmandiritestapp.R"/>
         <import type="android.view.View"/>
         <variable name="viewModel"
             type="com.example.falihmandiritestapp.ui.main.MainViewModel" />
@@ -23,12 +24,86 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/filter_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/include_toolbar">
+
+            <LinearLayout
+                android:id="@+id/category_filter_container"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="category: "
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv_category"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="General"
+                    android:text="@{viewModel.selectedCategory}"
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@color/colorPrimary20"
+                android:layout_height="match_parent"/>
+
+            <LinearLayout
+                android:id="@+id/source_filter_container"
+                android:layout_width="0dp"
+                android:gravity="center_horizontal"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="source: "
+                    tools:ignore="HardcodedText" />
+
+                <TextView
+                    android:id="@+id/tv_source"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Reuters"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_user_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             tools:listitem="@layout/item_article_list"
-            app:layout_constraintTop_toBottomOf="@id/include_toolbar"
+            app:layoutres="@{R.layout.item_article_list}"
+            app:items="@{viewModel.articleSearchResults}"
+            app:layout_constraintTop_toBottomOf="@id/filter_info_container"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
@@ -63,6 +138,7 @@
             <TextView
                 android:text="@string/loading_data"
                 android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -88,6 +164,7 @@
             <TextView
                 android:text="@string/loading_more_data"
                 android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -103,9 +180,9 @@
             android:background="@color/colorAccent20"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="@{ viewModel.userSearchFetchError ? View.VISIBLE : View.GONE, default=gone }"
+            android:visibility="@{ viewModel.articleSearchFetchError ? View.VISIBLE : View.GONE, default=gone }"
             tools:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/include_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/filter_info_container"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
@@ -113,6 +190,7 @@
                 android:text="@string/failed_to_load_data"
                 android:textAlignment="center"
                 android:clickable="false"
+                android:textAppearance="@style/TextAppearance.AppCompat.Inverse"
                 android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />

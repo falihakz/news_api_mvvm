@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
+
         <variable
             name="position"
             type="Integer" />
@@ -16,20 +19,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:elevation="1dp">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
             android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -37,6 +41,7 @@
                     android:layout_width="50dp"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/ic_close_grey_24dp"
+                    app:imageUrl="@{viewModel.getArticleThumbnailUrlAt(position)}"
                     android:layout_height="match_parent"/>
 
                 <TextView
@@ -44,8 +49,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                    android:padding="10dp"
-                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:layout_gravity="top|left"
+                    android:text="@{viewModel.getArticleTitleAt(position)}"
                     tools:text="Trump wants California to let automaker Tesla reopen assembly plant" />
             </LinearLayout>
 
@@ -61,6 +67,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:textColor="#808080"
                     android:textSize="12sp"
+                    android:text="@{viewModel.getArticlePublishedTimeAt(position)}"
                     tools:text="4m ago" />
 
                 <TextView
@@ -79,6 +86,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:textColor="#808080"
                     android:textSize="12sp"
+                    android:text="@{viewModel.getArticleSourceAt(position)}"
                     tools:text="Reuters.com"/>
 
             </LinearLayout>
@@ -87,6 +95,7 @@
                 android:id="@+id/article_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@{viewModel.getArticleDescriptionAt(position)}"
                 tools:text="U.S. president Donald Trump on Tuesday urged California to allow Tesla inc to reopen its electric vehicle"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

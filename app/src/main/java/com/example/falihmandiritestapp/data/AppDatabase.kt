@@ -8,9 +8,10 @@ import androidx.room.TypeConverters
 import com.example.falihmandiritestapp.BuildConfig
 import com.example.falihmandiritestapp.data.dao.ArticleDao
 import com.example.falihmandiritestapp.data.entity.Article
+import com.example.falihmandiritestapp.data.entity.Source
 import java.io.File
 
-@Database(entities = [Article::class], version = 1)
+@Database(entities = [Article::class, Source::class], version = 1)
 @TypeConverters(EntityFieldConverters::class)
 abstract class AppDatabase :RoomDatabase() {
 

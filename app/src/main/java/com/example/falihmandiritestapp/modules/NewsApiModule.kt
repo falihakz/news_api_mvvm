@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -30,7 +31,7 @@ fun provideNewsApi(retrofit: Retrofit): APIServices = retrofit.create(APIService
 fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
     return Retrofit.Builder()
         .baseUrl(NEWS_API_BASE_URL)
-//        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
@@ -38,7 +39,7 @@ fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
 
 fun provideGson(): Gson {
     return GsonBuilder()
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .setLenient()
         .create()
 }

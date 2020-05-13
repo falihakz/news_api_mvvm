@@ -8,6 +8,9 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,6 +24,7 @@ import com.example.falihmandiritestapp.databinding.MainFragmentBinding
 import kotlinx.android.synthetic.main.generic_list_dialog.*
 import kotlinx.android.synthetic.main.search_toolbar.view.*
 import kotlinx.android.synthetic.main.simple_list_item.view.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment : Fragment() {
@@ -30,7 +34,7 @@ class MainFragment : Fragment() {
     }
 
     private lateinit var binding: MainFragmentBinding
-    private val viewModel: MainViewModel by viewModel()
+    private val viewModel: MainViewModel by sharedViewModel()
 
     private val categories by lazy {
         resources.getStringArray(R.array.categories)
@@ -55,11 +59,6 @@ class MainFragment : Fragment() {
         initObserver()
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.setCategory(categories[0])
-    }
-
     private fun initObserver() {
         viewModel.selectedSource.observe(viewLifecycleOwner, Observer {
             if (it.isNullOrBlank()){
@@ -68,7 +67,7 @@ class MainFragment : Fragment() {
                 binding.tvSource.text = it
             }
         })
-        viewModel.loadingArticleListEvent.observe(viewLifecycleOwner, Observer {isLoading ->
+        viewModel.loadingArticleListEvent.observe(viewLifecycleOwner, Observer { isLoading ->
             if(isLoading != null && isLoading == true){
                 if (viewModel.mPage > 1){
                     binding.tvLoadingContainer.visibility = View.GONE
@@ -80,6 +79,17 @@ class MainFragment : Fragment() {
             } else {
                 binding.tvLoadingContainer.visibility = View.GONE
                 binding.tvLoadMoreContainer.visibility = View.GONE
+            }
+        })
+        viewModel.openArticleDetailEvent.observe(viewLifecycleOwner, Observer { url ->
+            url?.let {
+                if (context == null) return@let
+                val intent = CustomTabsIntent.Builder()
+                    .setToolbarColor(ContextCompat.getColor(context!!, R.color.colorPrimary))
+                    .setStartAnimations(context!!, R.anim.slide_in_right, R.anim.hold)
+                    .setExitAnimations(context!!, R.anim.hold, R.anim.slide_out_right)
+                    .build()
+                intent.launchUrl(context!!, it.toUri())
             }
         })
     }

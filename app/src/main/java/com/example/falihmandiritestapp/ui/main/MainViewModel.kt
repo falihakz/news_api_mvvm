@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
+import com.example.falihmandiritestapp.common.SingleLiveEvent
 import com.example.falihmandiritestapp.data.entity.Article
 import com.example.falihmandiritestapp.data.entity.Source
 import com.example.falihmandiritestapp.data.repository.ArticleRepository
@@ -56,12 +57,15 @@ class MainViewModel(
         setKeyword(mKeyword.value?:"")
     }
 
+    val openArticleDetailEvent = SingleLiveEvent<String>()
+
     // for calling APIs
     private val disposables = CompositeDisposable()
 
     init {
         mKeyword.observeForever(mKeywordObserver)
         _selectedCategory.observeForever(selectedCategoryObserver)
+        setCategory("General")
     }
 
     private fun retrieveTopHeadline(page: Int, keyword: String, category: String, source: String) {
@@ -172,4 +176,7 @@ class MainViewModel(
     }
     fun getArticleSourceAt(position: Int): String = articleSearchResults.value?.get(position)?.source?.name ?:""
     fun getArticleDescriptionAt(position: Int): String = articleSearchResults.value?.get(position)?.description ?:""
+    fun openArticleDetailAt(position: Int){
+        openArticleDetailEvent.postValue(articleSearchResults.value?.get(position)?.url)
+    }
 }

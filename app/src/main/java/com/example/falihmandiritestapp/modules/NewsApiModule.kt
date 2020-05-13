@@ -1,15 +1,14 @@
 package com.example.falihmandiritestapp.modules
 
-import android.content.Context
 import com.example.falihmandiritestapp.BuildConfig
-import com.example.falihmandiritestapp.R
 import com.example.falihmandiritestapp.api.APIServices
+import com.example.falihmandiritestapp.common.NEWS_API_BASE_URL
+import com.example.falihmandiritestapp.common.NEWS_API_KEY
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -21,17 +20,17 @@ const val TIME_OUT: Long = 30
 val newsApiModule = module {
     factory { provideHttpLoggingInterceptor() }
     factory { provideGson() }
-    factory { provideOkHttpClient(get(), androidContext()) }
+    factory { provideOkHttpClient(get()) }
     factory { provideNewsApi(get()) }
-    single { provideRetrofit(get(), get(), androidContext()) }
+    single { provideRetrofit(get(), get()) }
 }
 
 
 fun provideNewsApi(retrofit: Retrofit): APIServices = retrofit.create(APIServices::class.java)
 
-fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson, context: Context): Retrofit {
+fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
     return Retrofit.Builder()
-        .baseUrl( context.getString(R.string.news_api_base_url))
+        .baseUrl(NEWS_API_BASE_URL)
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
@@ -40,12 +39,12 @@ fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson, context: Context): R
 
 fun provideGson(): Gson {
     return GsonBuilder()
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+//        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .setLenient()
         .create()
 }
 
-fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor, context: Context): OkHttpClient {
+fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
 
     val builder = OkHttpClient.Builder()
 
@@ -56,7 +55,7 @@ fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor, context:
         .addInterceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
             requestBuilder.addHeader(
-                "X-Api-Key", context.getString(R.string.news_api_key)
+                "X-Api-Key", NEWS_API_KEY
             )
             chain.proceed(requestBuilder.build())
         }

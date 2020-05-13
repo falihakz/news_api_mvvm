@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Falih Mandiri Test App</string>
-    <string name="news_api_base_url">https://newsapi.org</string>
-    <string name="news_api_key">56abd84b04d0452895b82a6d0034e02b</string>
+    <string name="hint_search_news">search news</string>
+    <string name="no_article_found">No Article Found</string>
+    <string name="loading_data">Loading Data</string>
+    <string name="loading_more_data">Loading more article</string>
+    <string name="failed_to_load_data">Failed to load the latest article</string>
+    <string name="category_list_dialog_title">Select Category</string>
+    <string name="source_list_dialog_title">Select Source</string>
 </resources>

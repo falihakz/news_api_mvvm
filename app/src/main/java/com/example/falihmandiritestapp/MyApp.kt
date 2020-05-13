@@ -1,6 +1,8 @@
 package com.example.falihmandiritestapp
 
 import android.app.Application
+import com.example.falihmandiritestapp.modules.articleRepository
+import com.example.falihmandiritestapp.modules.mainViewModel
 import com.example.falihmandiritestapp.modules.newsApiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -34,7 +36,9 @@ class MyApp : Application() {
             androidLogger()
             androidContext(this@MyApp)
             modules(listOf(
-                newsApiModule
+                newsApiModule,
+                articleRepository,
+                mainViewModel
             ))
         }
     }

@@ -14,8 +14,10 @@ import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.falihmandiritestapp.MyApp
 import com.example.falihmandiritestapp.R
 import com.example.falihmandiritestapp.common.adapter.BindableAdapter
 import com.example.falihmandiritestapp.common.ui.InfiniteScroll
@@ -24,8 +26,7 @@ import com.example.falihmandiritestapp.databinding.MainFragmentBinding
 import kotlinx.android.synthetic.main.generic_list_dialog.*
 import kotlinx.android.synthetic.main.search_toolbar.view.*
 import kotlinx.android.synthetic.main.simple_list_item.view.*
-import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import javax.inject.Inject
 
 class MainFragment : Fragment() {
 
@@ -33,8 +34,11 @@ class MainFragment : Fragment() {
         fun newInstance() = MainFragment()
     }
 
+    @set:Inject
+    var mainViewModelFactory: MainViewModelFactory? = null
     private lateinit var binding: MainFragmentBinding
-    private val viewModel: MainViewModel by sharedViewModel()
+
+    private lateinit var viewModel: MainViewModel
 
     private val categories by lazy {
         resources.getStringArray(R.array.categories)
@@ -44,10 +48,16 @@ class MainFragment : Fragment() {
         BindableAdapter<MainViewModel, Article>(viewModel = viewModel)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (activity?.application as MyApp).appComponent?.doInjection(this)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel = ViewModelProvider(this, mainViewModelFactory!!).get(MainViewModel::class.java)
         binding = DataBindingUtil.inflate(inflater, R.layout.main_fragment, container, false)
         return binding.root
     }

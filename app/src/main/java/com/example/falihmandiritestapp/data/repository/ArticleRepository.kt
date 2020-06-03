@@ -12,6 +12,7 @@ import com.example.falihmandiritestapp.data.entity.Article
 import io.reactivex.Observable
 import retrofit2.Response
 
+//todo: learn to cache result from API into local db using NetworkBoundResource livedata
 class ArticleRepository(
     private val context: Context,
     private val apiServices: APIServices

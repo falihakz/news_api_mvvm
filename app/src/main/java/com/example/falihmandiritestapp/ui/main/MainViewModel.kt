@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.falihmandiritestapp.common.SingleLiveEvent
+import com.example.falihmandiritestapp.common.toTimeSpanString
 import com.example.falihmandiritestapp.data.entity.Article
 import com.example.falihmandiritestapp.data.repository.ArticleRepository
 import com.example.falihmandiritestapp.model.FilterBundle
@@ -101,12 +102,7 @@ class MainViewModel(
     fun getArticleTitleAt(position: Int): String = articleSearchResults.value?.get(position)?.title?:""
     fun getArticlePublishedTimeAt(position: Int): String {
         val publishedDate: Date = articleSearchResults.value?.get(position)?.publishedAt?: Date()
-        val milliseconds = Calendar.getInstance(TimeZone.getTimeZone("UTC")).time.time - publishedDate.time
-        val minutes = milliseconds / (1000 * 60)
-        if (minutes < 60) return "${minutes}m ago"
-        val hours = minutes / 60
-        if (hours < 24) return "${hours}h ago"
-        return "${hours / 24}d ago"
+        return publishedDate.toTimeSpanString()
     }
     fun getArticleSourceAt(position: Int): String = articleSearchResults.value?.get(position)?.source?.name ?:""
     fun getArticleDescriptionAt(position: Int): String = articleSearchResults.value?.get(position)?.description ?:""

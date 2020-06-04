@@ -1,6 +1,9 @@
-package com.example.falihmandiritestapp.modules
+package com.example.falihmandiritestapp.di.module
 
 import android.content.Context
+import com.example.falihmandiritestapp.common.adapter.BindableAdapter
+import com.example.falihmandiritestapp.data.entity.Article
+import com.example.falihmandiritestapp.ui.main.MainViewModel
 
 import javax.inject.Singleton
 

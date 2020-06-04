@@ -64,11 +64,9 @@ class MainViewModel(
                     //  kalau internet down jadi bisa dicari lagi hasil pencarian terakhir
                     articleRepository.insertAll(it.body()?.articles)
                     mPage = page + 1
-//              } else _articleSearchFetchError.postValue(it.errorBody().toString())
                 } else _articleSearchFetchError.postValue(true)
             }, {
                 _loadingArticleListEvent.postValue(false)
-//              _articleSearchFetchError.postValue(it.message.toString())
                 _articleSearchFetchError.postValue(true)
             })
 

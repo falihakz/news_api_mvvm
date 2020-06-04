@@ -1,4 +1,4 @@
-package com.example.falihmandiritestapp.modules
+package com.example.falihmandiritestapp.di.module
 
 import android.content.Context
 import com.example.falihmandiritestapp.api.APIServices

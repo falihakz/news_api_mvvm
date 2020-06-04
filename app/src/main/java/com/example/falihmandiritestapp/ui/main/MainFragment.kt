@@ -1,7 +1,9 @@
 package com.example.falihmandiritestapp.ui.main
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -12,10 +14,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.falihmandiritestapp.MyApp
 import com.example.falihmandiritestapp.R
-import com.example.falihmandiritestapp.common.adapter.BindableAdapter
 import com.example.falihmandiritestapp.common.ui.InfiniteScroll
-import com.example.falihmandiritestapp.data.entity.Article
 import com.example.falihmandiritestapp.databinding.MainFragmentBinding
+import com.example.falihmandiritestapp.di.component.DaggerFragmentComponent
+import com.example.falihmandiritestapp.di.component.FragmentComponent
 import com.example.falihmandiritestapp.ui.filter.FilterViewModel
 import com.example.falihmandiritestapp.ui.filter.FilterViewModelFactory
 import javax.inject.Inject
@@ -27,7 +29,7 @@ class MainFragment : Fragment() {
     }
 
     @set:Inject
-    var mainViewModelFactory: MainViewModelFactory? = null
+    lateinit var mainViewModelFactory: MainViewModelFactory
     private lateinit var mainViewModel: MainViewModel
     @set:Inject
     var filterViewModelFactory: FilterViewModelFactory? = null
@@ -35,20 +37,23 @@ class MainFragment : Fragment() {
 
     private lateinit var binding: MainFragmentBinding
 
-    private val adapter: BindableAdapter<MainViewModel, Article> by lazy {
-        BindableAdapter<MainViewModel, Article>(viewModel = mainViewModel)
+    private val adapter: ArticleAdapter by lazy {
+        ArticleAdapter(viewModel = mainViewModel)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity?.application as MyApp).appComponent?.doInjection(this)
+        val fragmentComponent: FragmentComponent = DaggerFragmentComponent.builder()
+            .appComponent((activity?.application as MyApp).appComponent!!)
+            .build()
+        fragmentComponent.inject(this)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mainViewModel = ViewModelProvider(requireActivity(), mainViewModelFactory!!).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(requireActivity(), mainViewModelFactory).get(MainViewModel::class.java)
         filterViewModel = ViewModelProvider(requireActivity(), filterViewModelFactory!!).get(FilterViewModel::class.java)
         binding = DataBindingUtil.inflate(inflater, R.layout.main_fragment, container, false)
         return binding.root
@@ -90,32 +95,13 @@ class MainFragment : Fragment() {
 
         filterViewModel.eFilter.observe(viewLifecycleOwner, Observer {
             it?.let {
+                resetRvScrollListener()
                 mainViewModel.applyFilter(it)
             }
         })
     }
 
     private fun initViews() {
-//        binding.categoryFilterContainer.setOnClickListener {
-//            showCategoryList()
-//        }
-//        binding.sourceFilterContainer.setOnClickListener {
-//            showSourceList()
-//        }
-//
-//        binding.includeToolbar.toolbarSearch.setOnEditorActionListener { v, actionId, _ ->
-//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                resetRvScrollListener()
-//                viewModel.setKeyword(v.text.toString())
-//            }
-//            false
-//        }
-//        binding.includeToolbar.toolbarClose.setOnClickListener {
-//            resetRvScrollListener()
-//            binding.includeToolbar.toolbarSearch.setText("")
-//            viewModel.resetSearch()
-//        }
-
         binding.errorWarningContainer.setOnClickListener {
             mainViewModel.loadNextPage()
         }

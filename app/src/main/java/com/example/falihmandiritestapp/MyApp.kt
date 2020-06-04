@@ -1,10 +1,11 @@
 package com.example.falihmandiritestapp
 
 import android.app.Application
-import com.example.falihmandiritestapp.modules.*
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
+import com.example.falihmandiritestapp.di.*
+import com.example.falihmandiritestapp.di.component.AppComponent
+import com.example.falihmandiritestapp.di.component.DaggerAppComponent
+import com.example.falihmandiritestapp.di.module.ApiGeneratorModule
+import com.example.falihmandiritestapp.di.module.AppModule
 
 class MyApp : Application() {
 

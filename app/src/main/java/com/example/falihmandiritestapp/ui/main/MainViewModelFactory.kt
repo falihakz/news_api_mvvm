@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.falihmandiritestapp.data.repository.ArticleRepository
 import javax.inject.Inject
 
+@Suppress("UNCHECKED_CAST")
 class MainViewModelFactory @Inject constructor(
     private val articleRepository: ArticleRepository
 ): ViewModelProvider.Factory {

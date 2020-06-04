@@ -2,6 +2,7 @@ package com.example.falihmandiritestapp.common
 
 const val NEWS_API_BASE_URL = "https://newsapi.org/v2/"
 const val NEWS_API_KEY = "56abd84b04d0452895b82a6d0034e02b"
+const val API_TIMEOUT = 10L
 
 const val NEWS_ARTICLE_PER_PAGE = 5
 

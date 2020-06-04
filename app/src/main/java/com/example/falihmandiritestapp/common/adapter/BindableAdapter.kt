@@ -9,12 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.falihmandiritestapp.BR
 
 /**
- * doc created by Falih on 17/10/2019
- *
  * Class ini digunakan sebagai generic adapter untuk recyclerview yang menggunakan databinding.
  */
 open class BindableAdapter<VM: ViewModel, T>(
-    private val viewModel: VM,
+    private val viewModel: VM? = null,
     private var layoutRes: Int? = null
 ): RecyclerView.Adapter<BindableAdapter<VM, T>.ViewHolder>() {
 
@@ -35,7 +33,7 @@ open class BindableAdapter<VM: ViewModel, T>(
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(viewModel, position)
+        holder.bind(viewModel!!, position)
     }
 
     fun setLayoutRes(layoutRes: Int){
@@ -52,7 +50,7 @@ open class BindableAdapter<VM: ViewModel, T>(
         //diffResult.dispatchUpdatesTo(this)
     }
 
-    inner class ViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(viewModel: VM, position: Int?) {
             binding.setVariable(BR.viewModel, viewModel)
             binding.setVariable(BR.position, position)

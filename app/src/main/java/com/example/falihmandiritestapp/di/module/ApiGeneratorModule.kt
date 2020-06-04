@@ -1,7 +1,8 @@
-package com.example.falihmandiritestapp.modules
+package com.example.falihmandiritestapp.di.module
 
 import com.example.falihmandiritestapp.BuildConfig
 import com.example.falihmandiritestapp.api.APIServices
+import com.example.falihmandiritestapp.common.API_TIMEOUT
 import com.example.falihmandiritestapp.common.NEWS_API_BASE_URL
 import com.example.falihmandiritestapp.common.NEWS_API_KEY
 import com.google.gson.FieldNamingPolicy
@@ -9,14 +10,12 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -33,9 +32,9 @@ class ApiGeneratorModule {
 			)
 			chain.proceed(requestBuilder.build())
 		}
-			.connectTimeout(TIME_OUT, TimeUnit.SECONDS)
-			.readTimeout(TIME_OUT, TimeUnit.SECONDS)
-			.writeTimeout(TIME_OUT, TimeUnit.SECONDS)
+			.connectTimeout(API_TIMEOUT, TimeUnit.SECONDS)
+			.readTimeout(API_TIMEOUT, TimeUnit.SECONDS)
+			.writeTimeout(API_TIMEOUT, TimeUnit.SECONDS)
 
 		if (BuildConfig.DEBUG) {
 			httpClient.addInterceptor(httpLoggingInterceptor)

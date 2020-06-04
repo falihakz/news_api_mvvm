@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.falihmandiritestapp.MyApp
 
 import com.example.falihmandiritestapp.R
+import com.example.falihmandiritestapp.di.component.DaggerFragmentComponent
+import com.example.falihmandiritestapp.di.component.FragmentComponent
 import com.example.falihmandiritestapp.ui.main.MainViewModel
 import com.example.falihmandiritestapp.ui.main.MainViewModelFactory
 import kotlinx.android.synthetic.main.filter_fragment.*
@@ -41,7 +43,11 @@ class FilterFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity?.application as MyApp).appComponent?.doInjection(this)
+        val fragmentComponent: FragmentComponent = DaggerFragmentComponent.builder()
+            .appComponent((activity?.application as MyApp).appComponent!!)
+            .build()
+        fragmentComponent.inject(this)
+//        (activity?.application as MyApp).appComponent?.doInjection(this)
     }
 
     override fun onCreateView(
@@ -69,13 +75,11 @@ class FilterFragment : Fragment() {
 
         include_toolbar.toolbarSearch.setOnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                //resetRvScrollListener()
                 filterViewModel.setKeyword(v.text.toString())
             }
             false
         }
         include_toolbar.toolbarClose.setOnClickListener {
-            //resetRvScrollListener()
             include_toolbar.toolbarSearch.setText("")
             filterViewModel.resetSearch()
         }
@@ -123,7 +127,6 @@ class FilterFragment : Fragment() {
             val tvTitle: TextView = view.tv_title
             tvTitle.text = categoryString
             tvTitle.setOnClickListener {
-                //resetRvScrollListener()
                 filterViewModel.setCategory(categoryString)
                 dialog.dismiss()
             }
@@ -152,7 +155,6 @@ class FilterFragment : Fragment() {
         val firstTvTitle: TextView = firstView.tv_title
         firstTvTitle.text = getString(R.string.all)
         firstTvTitle.setOnClickListener {
-            //resetRvScrollListener()
             filterViewModel.setSource("")
             dialog.dismiss()
         }

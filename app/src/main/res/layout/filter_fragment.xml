@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.filter.FilterFragment">
+
+    <include
+        android:id="@+id/include_toolbar"
+        layout="@layout/search_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/filter_info_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/include_toolbar">
+
+        <LinearLayout
+            android:id="@+id/category_filter_container"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="category: "
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tv_category"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="General"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/colorPrimary20"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/source_filter_container"
+            android:layout_width="0dp"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="source: "
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tv_source"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Reuters"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/source_filter_loading_container"
+            android:layout_width="0dp"
+            android:gravity="center_horizontal"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="@string/loading_sources"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

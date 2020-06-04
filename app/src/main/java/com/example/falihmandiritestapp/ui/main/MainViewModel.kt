@@ -2,13 +2,12 @@ package com.example.falihmandiritestapp.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.falihmandiritestapp.common.SingleLiveEvent
 import com.example.falihmandiritestapp.data.entity.Article
-import com.example.falihmandiritestapp.data.entity.Source
 import com.example.falihmandiritestapp.data.repository.ArticleRepository
+import com.example.falihmandiritestapp.model.FilterBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -18,17 +17,10 @@ class MainViewModel(
     private val articleRepository: ArticleRepository
 ) : ViewModel() {
 
-    private val _selectedCategory = MutableLiveData<String>()
-    val selectedCategory: LiveData<String> = _selectedCategory
-    private val _selectedSource = MutableLiveData<String>()
-    val selectedSource: LiveData<String> = _selectedSource
-
     private val _loadingArticleListEvent = MutableLiveData<Boolean>()
     val loadingArticleListEvent: LiveData<Boolean> = _loadingArticleListEvent
     private val _articleSearchResults = articleRepository.articleSearchResults
     val articleSearchResults: LiveData<List<Article>> = _articleSearchResults
-    private val _articleSources = MutableLiveData<List<Source>>()
-    val articleSources: LiveData<List<Source>> = _articleSources
     // untuk saat ini kacangin dulu detail errornya. Pake boolean aja dulu.
     private val _articleSearchFetchError = MutableLiveData<Boolean>()
     val articleSearchFetchError: LiveData<Boolean> = _articleSearchFetchError
@@ -38,35 +30,11 @@ class MainViewModel(
     // for data filter and pagination
     var mPage = 1
         private set
-
-    private val mKeyword = MutableLiveData<String?>()
-    private val mKeywordObserver = Observer<String?> {
-        // reset pagination
-        mPage = 1
-        // clear error flag
-        _articleSearchFetchError.postValue(false)
-        // clear previous list
-        _articleSearchResults.postValue(listOf())
-        // call API
-        retrieveTopHeadline(mPage, it?:"", selectedCategory.value?:"", selectedSource.value?:"")
-    }
-    private val selectedCategoryObserver = Observer<String?> {
-        // reset selecte source
-        _selectedSource.value = ""
-        retrieveSources(it?:"")
-        setKeyword(mKeyword.value?:"")
-    }
-
     val openArticleDetailEvent = SingleLiveEvent<String>()
+    private val mFilter = SingleLiveEvent<FilterBundle>()
 
     // for calling APIs
     private val disposables = CompositeDisposable()
-
-    init {
-        mKeyword.observeForever(mKeywordObserver)
-        _selectedCategory.observeForever(selectedCategoryObserver)
-        setCategory("General")
-    }
 
     private fun retrieveTopHeadline(page: Int, keyword: String, category: String, source: String) {
         val observable = articleRepository.fetchArticle(page, keyword, category, source)
@@ -107,60 +75,28 @@ class MainViewModel(
         disposables.add(disposable)
     }
 
-    private fun retrieveSources(category: String){
-        val observable = articleRepository.fetchSources(category)
-
-        val disposable = observable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                _loadingArticleListEvent.postValue(true)
-                _articleSearchFetchError.postValue(false)
-            }
-            .doOnDispose {
-                _loadingArticleListEvent.postValue(false)
-                _articleSearchFetchError.postValue(false)
-            }.subscribe({
-                if(it.isSuccessful){
-                    _articleSources.postValue(it.body()?.sources)
-                } else _articleSearchFetchError.postValue(true)
-            }, {
-                _loadingArticleListEvent.postValue(false)
-//              _articleSearchFetchError.postValue(it.message.toString())
-                _articleSearchFetchError.postValue(true)
-            })
-
-        disposables.add(disposable)
-    }
-
     override fun onCleared() {
         disposables.dispose()
-        mKeyword.removeObserver(mKeywordObserver)
-        _selectedCategory.removeObserver(selectedCategoryObserver)
         super.onCleared()
     }
 
-    fun setKeyword(keyword: String){
-        mKeyword.postValue(keyword)
-    }
-
     fun loadNextPage(){
-        mKeyword.value?.let {
-            retrieveTopHeadline(mPage, it, selectedCategory.value?:"", selectedSource.value?:"")
+        mFilter.value?.let {
+            retrieveTopHeadline(mPage, it.keyword, it.category, it.source)
         }
     }
 
-    fun resetSearch() {
-        setKeyword("")
-    }
-
-    fun setCategory(categoryString: String) {
-        _selectedCategory.value = categoryString
-        setKeyword(mKeyword.value?:"")
-    }
-
-    fun setSource(sourceString: String) {
-        _selectedSource.value = sourceString
-        setKeyword(mKeyword.value?:"")
+    fun applyFilter(it: FilterBundle) {
+        // reset pagination
+        mPage = 1
+        // clear error flag
+        _articleSearchFetchError.postValue(false)
+        // clear previous list
+        _articleSearchResults.postValue(listOf())
+        // call API
+        mFilter.value = it.also {
+            retrieveTopHeadline(mPage, it.keyword, it.category, it.source)
+        }
     }
 
     fun getArticleThumbnailUrlAt(position: Int): String = articleSearchResults.value?.get(position)?.urlToImage?:""

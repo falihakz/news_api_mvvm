@@ -38,11 +38,6 @@ class ArticleRepository(
         return apiServices.getTopHeadLines(sanitizedCategory, sanitizedSource, sanitizedKeyword, page)
     }
 
-    fun fetchSources(category: String): Observable<Response<SourceResponse>> {
-        val sanitizedCategory = category.trim().replace(" ", "+")
-        return apiServices.getSources(sanitizedCategory)
-    }
-
     fun insertAll(articles: List<Article>?) {
         articles?.let {
             insert(*it.toTypedArray())

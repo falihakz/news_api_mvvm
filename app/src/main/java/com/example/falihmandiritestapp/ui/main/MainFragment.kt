@@ -1,13 +1,7 @@
 package com.example.falihmandiritestapp.ui.main
 
-import android.annotation.SuppressLint
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -16,16 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.falihmandiritestapp.MyApp
 import com.example.falihmandiritestapp.R
 import com.example.falihmandiritestapp.common.adapter.BindableAdapter
 import com.example.falihmandiritestapp.common.ui.InfiniteScroll
 import com.example.falihmandiritestapp.data.entity.Article
 import com.example.falihmandiritestapp.databinding.MainFragmentBinding
-import kotlinx.android.synthetic.main.generic_list_dialog.*
-import kotlinx.android.synthetic.main.search_toolbar.view.*
-import kotlinx.android.synthetic.main.simple_list_item.view.*
+import com.example.falihmandiritestapp.ui.filter.FilterViewModel
+import com.example.falihmandiritestapp.ui.filter.FilterViewModelFactory
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
@@ -36,16 +28,15 @@ class MainFragment : Fragment() {
 
     @set:Inject
     var mainViewModelFactory: MainViewModelFactory? = null
+    private lateinit var mainViewModel: MainViewModel
+    @set:Inject
+    var filterViewModelFactory: FilterViewModelFactory? = null
+    private lateinit var filterViewModel: FilterViewModel
+
     private lateinit var binding: MainFragmentBinding
 
-    private lateinit var viewModel: MainViewModel
-
-    private val categories by lazy {
-        resources.getStringArray(R.array.categories)
-    }
-
     private val adapter: BindableAdapter<MainViewModel, Article> by lazy {
-        BindableAdapter<MainViewModel, Article>(viewModel = viewModel)
+        BindableAdapter<MainViewModel, Article>(viewModel = mainViewModel)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +48,8 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this, mainViewModelFactory!!).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(requireActivity(), mainViewModelFactory!!).get(MainViewModel::class.java)
+        filterViewModel = ViewModelProvider(requireActivity(), filterViewModelFactory!!).get(FilterViewModel::class.java)
         binding = DataBindingUtil.inflate(inflater, R.layout.main_fragment, container, false)
         return binding.root
     }
@@ -70,16 +62,9 @@ class MainFragment : Fragment() {
     }
 
     private fun initObserver() {
-        viewModel.selectedSource.observe(viewLifecycleOwner, Observer {
-            if (it.isNullOrBlank()){
-                binding.tvSource.text = "All"
-            } else {
-                binding.tvSource.text = it
-            }
-        })
-        viewModel.loadingArticleListEvent.observe(viewLifecycleOwner, Observer { isLoading ->
+        mainViewModel.loadingArticleListEvent.observe(viewLifecycleOwner, Observer { isLoading ->
             if(isLoading != null && isLoading == true){
-                if (viewModel.mPage > 1){
+                if (mainViewModel.mPage > 1){
                     binding.tvLoadingContainer.visibility = View.GONE
                     binding.tvLoadMoreContainer.visibility = View.VISIBLE
                 } else {
@@ -91,7 +76,7 @@ class MainFragment : Fragment() {
                 binding.tvLoadMoreContainer.visibility = View.GONE
             }
         })
-        viewModel.openArticleDetailEvent.observe(viewLifecycleOwner, Observer { url ->
+        mainViewModel.openArticleDetailEvent.observe(viewLifecycleOwner, Observer { url ->
             url?.let {
                 if (context == null) return@let
                 val intent = CustomTabsIntent.Builder()
@@ -102,31 +87,37 @@ class MainFragment : Fragment() {
                 intent.launchUrl(context!!, it.toUri())
             }
         })
+
+        filterViewModel.eFilter.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                mainViewModel.applyFilter(it)
+            }
+        })
     }
 
     private fun initViews() {
-        binding.categoryFilterContainer.setOnClickListener {
-            showCategoryList()
-        }
-        binding.sourceFilterContainer.setOnClickListener {
-            showSourceList()
-        }
-
-        binding.includeToolbar.toolbarSearch.setOnEditorActionListener { v, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                resetRvScrollListener()
-                viewModel.setKeyword(v.text.toString())
-            }
-            false
-        }
-        binding.includeToolbar.toolbarClose.setOnClickListener {
-            resetRvScrollListener()
-            binding.includeToolbar.toolbarSearch.setText("")
-            viewModel.resetSearch()
-        }
+//        binding.categoryFilterContainer.setOnClickListener {
+//            showCategoryList()
+//        }
+//        binding.sourceFilterContainer.setOnClickListener {
+//            showSourceList()
+//        }
+//
+//        binding.includeToolbar.toolbarSearch.setOnEditorActionListener { v, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//                resetRvScrollListener()
+//                viewModel.setKeyword(v.text.toString())
+//            }
+//            false
+//        }
+//        binding.includeToolbar.toolbarClose.setOnClickListener {
+//            resetRvScrollListener()
+//            binding.includeToolbar.toolbarSearch.setText("")
+//            viewModel.resetSearch()
+//        }
 
         binding.errorWarningContainer.setOnClickListener {
-            viewModel.loadNextPage()
+            mainViewModel.loadNextPage()
         }
 
         binding.rvUserList.layoutManager = LinearLayoutManager(context)
@@ -139,83 +130,13 @@ class MainFragment : Fragment() {
         binding.rvUserList.clearOnScrollListeners()
         binding.rvUserList.addOnScrollListener(object: InfiniteScroll(){
             override fun onLoadMore() {
-                viewModel.loadNextPage()
+                mainViewModel.loadNextPage()
             }
         })
     }
 
     private fun initBinding() {
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = viewModel
-    }
-
-    @SuppressLint("InflateParams")
-    private fun showCategoryList() {
-        if (context == null) return
-        val dialog = Dialog(context!!)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.generic_list_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-        dialog.dialog_title.text = getString(R.string.category_list_dialog_title)
-        val listContainer = dialog.listContainer
-
-        listContainer.removeAllViews()
-
-        categories.forEach {categoryString ->
-            val view = layoutInflater.inflate(R.layout.simple_list_item, null)
-
-            val tvTitle: TextView = view.tv_title
-            tvTitle.text = categoryString
-            tvTitle.setOnClickListener {
-                resetRvScrollListener()
-                viewModel.setCategory(categoryString)
-                dialog.dismiss()
-            }
-
-            listContainer.addView(view)
-        }
-
-        dialog.show()
-    }
-
-    @SuppressLint("InflateParams")
-    private fun showSourceList() {
-        if (context == null) return
-        val dialog = Dialog(context!!)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.generic_list_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-        dialog.dialog_title.text = getString(R.string.source_list_dialog_title)
-        val listContainer = dialog.listContainer
-
-        listContainer.removeAllViews()
-
-        //first selection is for all sources / blank source
-        val view = layoutInflater.inflate(R.layout.simple_list_item, null)
-        val tvTitle: TextView = view.tv_title
-        tvTitle.text = "All"
-        tvTitle.setOnClickListener {
-            resetRvScrollListener()
-            viewModel.setSource("")
-            dialog.dismiss()
-        }
-        listContainer.addView(view)
-
-        viewModel.articleSources.value?.forEach {source ->
-            val view = layoutInflater.inflate(R.layout.simple_list_item, null)
-
-            val tvTitle: TextView = view.tv_title
-            tvTitle.text = source.name
-            tvTitle.setOnClickListener {
-                viewModel.setSource(source.id!!)
-                dialog.dismiss()
-            }
-
-            listContainer.addView(view)
-        }
-
-        dialog.show()
+        binding.viewModel = mainViewModel
     }
 }

@@ -7,4 +7,6 @@
     <string name="failed_to_load_data">Failed to load the latest article</string>
     <string name="category_list_dialog_title">Select Category</string>
     <string name="source_list_dialog_title">Select Source</string>
+    <string name="all">All</string>
+    <string name="loading_sources">loading sources...</string>
 </resources>
